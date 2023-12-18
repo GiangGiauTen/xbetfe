@@ -1,10 +1,13 @@
 import { CoffeeOutlined, UndoOutlined } from "@ant-design/icons";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { Link, RouteComponentProps, useHistory, useParams } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { withAuth } from "../../components/hoc";
+import axios from "axios"
+import MemberGroup from "./MemberGroup"
+import AddMember from "./AddMember"
 import {
   CreatePostModal,
   PostItem,
@@ -26,8 +29,15 @@ import {
 import socket from "../../socket/socket";
 import SideMenu from "./SideMenu";
 import * as Tab from "../profile/Tabs";
+import {API_URL } from "../../config.js"
 
-const Home = (props) => {
+const GroupDetail = (props) => {
+  const [groups, setGroups] = useState([]);
+  const [openMemberGroup, setOpenMemberGroup]= useState(false)
+  const [openAddMember, setOpenAddMember]= useState(false)
+  const [change, setChange]= useState(false)
+  const {id }= useParams()
+  const history= useHistory()
   const state = useSelector(
     (state) => ({
       newsFeed: state.newsFeed,
@@ -89,6 +99,20 @@ const Home = (props) => {
     scrollContainer: "window",
   });
 
+  useEffect(() => {
+    const fetchGroupDetail = async () => {
+      try {
+        const response = await axios.get(API_URL + `/api/groups/${id}`);
+        setGroups(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error('Error fetching user groups:', error);
+      }
+    };
+
+    fetchGroupDetail();
+  }, [id]);
+
   return (
     <div className="laptop:px-6% pt-20 flex items-start">
       {/*  --- SIDE MENU --- */}
@@ -97,97 +121,38 @@ const Home = (props) => {
           <SideMenu
             openModal={openModal}
             username={state.auth.username}
+            data={state.auth}
             profilePicture={state.auth.profilePicture?.url}
           />
         )}
       </div>
-      <div className="w-full laptop:w-3/4 relative">
-        {/* --- CREATE POST INPUT ---- */}
+      <div style={{width: '100%'}}>
+        <div style={{width: "100%", backgroundColor: "#d9d9d9", padding: 20, textAlign: "center"}}>Avatar group</div>
+        <div style={{width: "100%", padding: 10, backgroundColor: '#dbb5b5'}}>
+          <div style={{width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 16, borderBottom: "1px solid #000"}}>
+            <div style={{padding: 10, backgroundColor: "#e3e1e3",  display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 80, cursor: "pointer"}}>{groups?.name}</div>
+            <div style={{display: "flex", justifyContent: "center", alignItems: "center", gap: 10}}>
+              <div onClick={()=> {
+                setOpenMemberGroup(true)
+              }} style={{padding: 10, backgroundColor: "#e3e1e3",  display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 80, cursor: "pointer"}}>Member</div>
+              <div onClick={()=> {
+                setOpenAddMember(true)
+              }} style={{padding: 10, backgroundColor: "#e3e1e3",  display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 80, cursor: "pointer"}}>Add</div>
+            </div>
+          </div>
+          <div style={{width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0"}}>
+            <div style={{display: "flex", justifyContent: "center", alignItems: "center", gap: 10}}>
+              <div onClick={()=> {
+                openModal()
 
-        {props.isAuth && (
-          <div className="flex items-center justify-start mb-4 px-4 laptop:px-0">
-            <Avatar url={state.auth.profilePicture?.url} className="mr-2" />
-            <div className="flex-grow">
-              <input
-                className="dark:bg-indigo-1000 dark:!border-gray-800 dark:text-white"
-                type="text"
-                placeholder="Create a post."
-                onClick={() =>
-                  !state.isLoadingCreatePost &&
-                  !state.isLoadingFeed &&
-                  openModal()
-                }
-                readOnly={state.isLoadingFeed || state.isLoadingCreatePost}
-              />
+              }}  style={{padding: 10, backgroundColor: "#d37374",  display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 80, cursor: "pointer"}}>discuss</div>
+              <div onClick={()=> {
+                openModal()
+
+              }} style={{padding: 10, backgroundColor: "#e3e1e3",  display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 80, cursor: "pointer"}}>Post</div>
             </div>
           </div>
-        )}
-        {/*  --- HAS NEW FEED NOTIF --- */}
-        {state.newsFeed.hasNewFeed && (
-          <button
-            className="sticky mt-2 top-16 left-0 right-0 mx-auto z-20 flex items-center"
-            onClick={onClickNewFeed}
-          >
-            <UndoOutlined className="flex items-center justify-center text-xl mr-4" />
-            New Feed Available
-          </button>
-        )}
-        {/* --- CREATE POST MODAL ----- */}
-        {props.isAuth && isOpen && (
-          <CreatePostModal
-            isOpen={isOpen}
-            openModal={openModal}
-            closeModal={closeModal}
-            dispatchCreatePost={dispatchCreatePost}
-          />
-        )}
-        {state.error &&
-          state.newsFeed.items.length === 0 &&
-          !state.isLoadingCreatePost && (
-            <div className="flex flex-col w-full min-h-24rem px-8 items-center justify-center text-center">
-              {state.error.status_code === 404 ? (
-                <>
-                  <CoffeeOutlined className="text-8xl text-gray-300 mb-4 dark:text-gray-800" />
-                  <h5 className="text-gray-500">News feed is empty</h5>
-                  <p className="text-gray-400">
-                    Start following people or create your first post.
-                  </p>
-                  <br />
-                  <Link
-                    className="underline dark:text-indigo-400"
-                    to={SUGGESTED_PEOPLE}
-                  >
-                    See Suggested People
-                  </Link>
-                </>
-              ) : (
-                <h5 className="text-gray-500 italic">
-                  {state.error?.error?.message || "Something went wrong :("}
-                </h5>
-              )}
-            </div>
-          )}
-        {/* ---- LOADING INDICATOR ----- */}
-        {state.isLoadingFeed && state.newsFeed.items.length === 0 && (
-          <div className="mt-4 px-2 overflow-hidden space-y-6 pb-10">
-            <PostLoader />
-            <PostLoader />
-          </div>
-        )}
-        {state.isLoadingCreatePost && (
-          <div className="mt-4 px-2 overflow-hidden pb-10">
-            <PostLoader />
-          </div>
-        )}
-        {!props.isAuth && !state.isLoadingFeed && (
-          <div className="px-4 laptop:px-0 py-4 mb-4">
-            <h2 className="dark:text-white">
-              Public posts that might <br />
-              interest you.
-            </h2>
-          </div>
-        )}
-        {/* ---- NEWS FEED ---- */}
+        </div>
         {state.newsFeed.items.length !== 0 && (
           <div className="mb-8">
             <TransitionGroup component={null}>
@@ -224,13 +189,37 @@ const Home = (props) => {
             )}
           </div>
         )}
-      </div>
+      </div>    
       <PostModals
         deleteSuccessCallback={deleteSuccessCallback}
-        updateSuccessCallback={updateSuccessCallback}
+        updateSuccessCallback={updateSuccessCallback} 
+      />
+      {isOpen && (
+          <CreatePostModal
+            groupId={groups._id}
+            isOpen={isOpen}
+            openModal={openModal}
+            closeModal={closeModal}
+            dispatchCreatePost={dispatchCreatePost}
+          />
+        )}
+      {/* ---- NEWS FEED ---- */}
+      <MemberGroup
+        groupId={groups._id}
+        open={openMemberGroup}
+        setOpen={setOpenMemberGroup}
+        change={change}
+        setChange={setChange}
+      />
+      <AddMember
+        groupId={groups._id}
+        open={openAddMember}
+        setOpen={setOpenAddMember}
+        change={change}
+        setChange={setChange}
       />
     </div>
   );
 };
 
-export default withAuth(Home);
+export default withAuth(GroupDetail);
