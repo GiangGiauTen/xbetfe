@@ -1,17 +1,30 @@
-import { StarOutlined, TeamOutlined, PlusOutlined } from "@ant-design/icons";
+import { StarOutlined, TeamOutlined, PlusOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/shared";
 import {useState, useEffect} from "react"
 import NewGroupPopup from "./NewGroupPopup"
+import {useHistory } from "react-router-dom"
 
 const SideMenu = ({ username, profilePicture, openModal, data}) => {
 
   const [open, setOpen]= useState(false)
+  const history= useHistory()
   
 
   return (
     <ul className="overflow-hidden">
-      
+      <li style={{backgroundColor: "#d7cdcf"}} className="px-4 py-3 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900">
+        <Link to="/" onClick={(e)=> {
+            e.preventDefault()
+            history.goBack()
+          }} className="flex items-center text-black">
+              <ArrowLeftOutlined
+                  className="text-indigo-700 dark:text-indigo-400"
+                  style={{ fontSize: "30px", marginRight: "25px" }}
+              />
+            <h6 className="text-sm dark:text-white">Go back</h6>
+          </Link>
+      </li>
       <li style={{backgroundColor: "#d7cdcf"}} className="px-4 py-3 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900">
         <Link to={`/user/${username}`} className="flex items-center text-black">
           <Avatar url={profilePicture} className="mr-4" />

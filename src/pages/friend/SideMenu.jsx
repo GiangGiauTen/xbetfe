@@ -17,7 +17,7 @@ const SideMenu = ({ username, profilePicture, openModal, data, change, setChange
       <li style={{backgroundColor: "#d7cdcf"}} className="px-4 py-3 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900">
         <Link to="/" onClick={(e)=> {
           e.preventDefault()
-          history.goBack()
+          history.push("/")
         }} className="flex items-center text-black">
             <ArrowLeftOutlined
                 className="text-indigo-700 dark:text-indigo-400"

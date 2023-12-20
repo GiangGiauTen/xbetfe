@@ -43,6 +43,9 @@ const SideMenu = ({ username, profilePicture, openModal, data, change, setChange
       <li style={{backgroundColor: "#d7cdcf"}} className="px-4 py-3 cursor-pointer mt-4 hover:bg-indigo-100  dark:hover:bg-indigo-900">
         <Link
           to={`/user/${username}/following`}
+          onClick={(e)=> {
+            e.preventDefault()
+          }}
           className="flex items-center text-black"
         >
           <TeamOutlined

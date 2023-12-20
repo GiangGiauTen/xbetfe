@@ -14,6 +14,7 @@ import { setAuthErrorMessage } from "../../redux/action/errorActions";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword]= useState("")
   const [username, setUsername] = useState("");
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const dispatch = useDispatch();
@@ -42,6 +43,12 @@ const Register = () => {
 
     setPassword(val);
   };
+
+  const onConfirmPasswordChange= (e)=> {
+    const val= e.target.value.trim();
+    
+    setConfirmPassword(val)
+  }
 
   const onUsernameChange = (e) => {
     const val = e.target.value.trim();
@@ -186,14 +193,14 @@ const Register = () => {
                   name="password"
                   type={isPasswordVisible ? "text" : "password"}
                   className={`!pr-12 ${error ? "input--error" : ""}`}
-                  onChange={onPasswordChange}
+                  onChange={onConfirmPasswordChange}
                   autoComplete="current-password"
                   required
                   minLength={8}
                   maxLength={100}
                   readOnly={isLoading}
                   placeholder="Confirm Password"
-                  value={password}
+                  value={confirmPassword}
                 />
                 <div className="absolute right-0 top-0 bottom-0 my-auto flex items-center justify-center w-12 h-12 hover:bg-gray-200 cursor-pointer rounded-tr-full rounded-br-full z-10">
                   {isPasswordVisible ? (

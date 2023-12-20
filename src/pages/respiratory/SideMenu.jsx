@@ -1,7 +1,7 @@
-import { StarOutlined, TeamOutlined, PlusOutlined } from "@ant-design/icons";
+import { StarOutlined, TeamOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/shared";
-import {useState, useEffect} from "react"
+import {useState} from "react"
 import NewGroupPopup from "./NewGroupPopup"
 import {useHistory } from "react-router-dom"
 import {ArrowLeftOutlined} from "@ant-design/icons"

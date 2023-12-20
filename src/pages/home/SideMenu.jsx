@@ -35,18 +35,6 @@ const SideMenu = ({ username, profilePicture, openModal}) => {
       </li>
       <li style={{backgroundColor: "#d7cdcf"}} className="px-4 py-3 cursor-pointer mt-4 hover:bg-indigo-100  dark:hover:bg-indigo-900">
         <Link
-          to={`/user/${username}/followers`}
-          className="flex items-center text-black"
-        >
-          <TeamOutlined
-            className="text-indigo-700 dark:text-indigo-400"
-            style={{ fontSize: "30px", marginRight: "25px" }}
-          />
-          <h6 className="text-sm dark:text-white">Group</h6>
-        </Link>
-      </li>
-      <li style={{backgroundColor: "#d7cdcf"}} className="px-4 py-3 cursor-pointer mt-4 hover:bg-indigo-100  dark:hover:bg-indigo-900">
-        <Link
           to={`/respiratory`}
           className="flex items-center text-black"
         >

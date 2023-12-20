@@ -157,7 +157,7 @@ const GroupDetail = (props) => {
           <div className="mb-8">
             <TransitionGroup component={null}>
               <div ref={infiniteRef}>
-                {state.newsFeed.items.map(
+                {state.newsFeed.items?.filter(item=> item.groupId === groups._id).map(
                   (post) =>
                     post.author && ( // avoid render posts with null author
                       <CSSTransition
