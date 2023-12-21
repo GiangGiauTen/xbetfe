@@ -10,7 +10,7 @@ import logo from "../../images/logo-white.svg";
 import logo_dark from "../../images/logo.svg";
 import { registerStart } from "../../redux/action/authActions";
 import { setAuthErrorMessage } from "../../redux/action/errorActions";
-
+import swal from "sweetalert"
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,8 +59,11 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (email && password && username) {
+    if (email && password && username && password === confirmPassword) {
       dispatch(registerStart({ email, password, username }));
+    }
+    else {
+      swal("Notice", "Your information is not fill or wrong", "error")
     }
   };
   return (
