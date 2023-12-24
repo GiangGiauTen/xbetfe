@@ -205,14 +205,14 @@ const RepositoryGroup = (props) => {
         {/* <div style={{width: '100%', height: 40, borderRadius: 80, backgroundColor: "#cf8f8f", marginBottom: 20}}>
           <input style={{width: "100%", height: "100%", border: "none", outlineColor: "#2e89ff", backgroundColor: "inherit", borderRadius: 80, padding: 10, paddingLeft: 20}} placeholder="Search group" />
         </div> */}
-        <>
+        {/* <>
           {
             state.newsFeed?.items?.filter(item=> item.isLink=== true)?.map((item, key)=> <div style={{width: "100%", margin: "12px 0", padding: 10, borderRadius: 10, backgroundColor: "rgb(207, 143, 143)"}}>
               <div>{item.name}</div>
               <div>{item.description}</div>
             </div>)
           }
-        </>
+        </> */}
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
@@ -225,7 +225,7 @@ const RepositoryGroup = (props) => {
                 </TableHead>
                 <TableBody>
                     {
-                        state.newsFeed?.items?.filter(item=> item.isLink=== true)?.map((item, key)=> <TableRow key={key}>
+                        state.newsFeed?.items?.filter(item=> item.isLink=== true)?.filter(item=> item.groupId === id)?.map((item, key)=> <TableRow key={key}>
                             <TableCell>{item.description}</TableCell>
                             <TableCell>{item.author.username}</TableCell>
                             <TableCell>{"No"}</TableCell>
@@ -255,6 +255,7 @@ const RepositoryGroup = (props) => {
       {/* --- CREATE POST MODAL ----- */}
       {isOpen && (
           <CreatePostModal
+            groupId={id}
             isFromRepo={true}
             isOpen={isOpen}
             openModal={openModal}
